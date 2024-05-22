@@ -3,30 +3,44 @@ import { useReducer, useEffect } from "react";
 const reducer = (state, action) => ({
   get_questions: {...state, questions: action.questions},
   set_currentQuestion: {...state, currentQuestion: state.currentQuestion === 4 ? 0 : state.currentQuestion + 1},
-  set_btnDisabled: {...state, btnDisabled: !state.btnDisabled},
+  set_btnDisabled: {...state, btnDisabled: action.btnDisabled},
+  set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer}
 })[action.type] || state
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, {questions: [], currentQuestion: 0, btnDisabled: false})
-  
+  const [state, dispatch] = useReducer(reducer, {questions: [], currentQuestion: 0, btnDisabled: false, clickedAnswer: null})
+  console.log(state.questions)
+  let rightOption = state?.questions[state.currentQuestion]?.correctOption 
+
   useEffect(() => {
     fetch("http://localhost:5173/src/videogame-questions.json")
       .then(response => response.json())
       .then(data => dispatch({type: "get_questions",  questions: data}))
   },[])
 
+  // const checkTheAnswer = (answer) => {
+  //   answer === rightOption
+  // }
+
+  const handleClickAnswer = (answer) => {
+    dispatch({type: "set_btnDisabled", btnDisabled: true})
+    dispatch({type: "set_clickedAnswer", clickedAnswer: answer})
+    // checkTheAnswer(answer)
+  }
+
   const handleNextClick = () => {
     dispatch({type: "set_currentQuestion"})
-    dispatch({type: "set_btnDisabled"})
+    dispatch({type: "set_btnDisabled", btnDisabled: false})
+    dispatch({type: "set_clickedAnswer", clickedAnswer: null})
   }
 
   return (
     <div className="app">
       <div className="main">
         <h4>{state?.questions[state.currentQuestion]?.question}</h4>
-        <ul className="options">
+        <ul className="options" >
           {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
-          <li key={index} className="btn btn-option" disabled={state.btnDisabled} onClick={() => dispatch({type: "set_btnDisabled"})}>{option} </li>))}
+          <li key={index} className={`btn btn-option ${state.btnDisabled && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`} disabled={state.btnDisabled} onClick={() => handleClickAnswer(index)}>{option}</li>))}
         </ul>
         <div>
           <div className="timer"></div>
