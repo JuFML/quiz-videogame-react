@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from "react";
 
 const reducer = (state, action) => ({
-  get_questions: {...state, questions: action.questions},
+  set_questions: {...state, questions: action.questions},
   set_currentQuestion: {...state, currentQuestion: state.currentQuestion === 4 ? 0 : state.currentQuestion + 1},
   set_btnDisabled: {...state, btnDisabled: action.btnDisabled},
   set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer}
@@ -15,7 +15,8 @@ const App = () => {
   useEffect(() => {
     fetch("http://localhost:5173/src/videogame-questions.json")
       .then(response => response.json())
-      .then(data => dispatch({type: "get_questions",  questions: data}))
+      .then(data => dispatch({type: "set_questions",  questions: data}))
+      .catch(error => alert(error.message))
   },[])
 
   // const checkTheAnswer = (answer) => {
