@@ -37,11 +37,13 @@ const App = () => {
   return (
     <div className="app">
       <div className="main">
-        <h4>{state?.questions[state.currentQuestion]?.question}</h4>
-        <ul className="options" >
-          {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
-          <li key={index} className={`btn btn-option ${state.btnDisabled && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`} disabled={state.btnDisabled} onClick={() => handleClickAnswer(index)}>{option}</li>))}
-        </ul>
+        <div>
+          <h4>{state?.questions[state.currentQuestion]?.question}</h4>
+          <ul className="options" >
+            {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
+            <li key={index}><button  disabled={state.btnDisabled} onClick={() => handleClickAnswer(index)} className={`btn btn-option ${state.btnDisabled && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
+          </ul>
+        </div>
         <div>
           <div className="timer"></div>
           {state.btnDisabled && <div className=" btn btn-ui" onClick={handleNextClick}>Próxima</div>}
