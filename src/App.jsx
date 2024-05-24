@@ -2,14 +2,16 @@ import { useReducer, useEffect } from "react";
 
 const reducer = (state, action) => ({
   set_questions: {...state, questions: action.questions},
-  set_currentQuestion: {...state, currentQuestion: state.currentQuestion === 4 ? 0 : state.currentQuestion + 1},
+  set_currentQuestion: {...state, currentQuestion: state.currentQuestion === state.questions.length - 1 ? 0 : state.currentQuestion + 1},
   set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer, userScore: action.userScore ? state.userScore + action.userScore : state.userScore}
 })[action.type] || state
 
+const initialState = {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0}
+
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0})
-  console.log(state.questions)
+  const [state, dispatch] = useReducer(reducer, initialState)  
   let rightOption = state?.questions[state.currentQuestion]?.correctOption 
+  let isTheLastQuestion = state.currentQuestion === state.questions.length - 1
 
   useEffect(() => {
     fetch("http://localhost:5173/src/videogame-questions.json")
@@ -46,7 +48,7 @@ const App = () => {
           </div>
           <div>
             <div className="timer"></div>
-            {state.clickedAnswer !== null && <div className=" btn btn-ui" onClick={handleNextClick}>Próxima</div>}
+            {state.clickedAnswer !== null && <button className=" btn btn-ui" onClick={handleNextClick}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>}
           </div>
         </>}
       </div>
