@@ -4,6 +4,7 @@ const reducer = (state, action) => ({
   set_questions: {...state, questions: action.questions},
   set_currentQuestion: {...state, currentQuestion: action.currentQuestion},
   set_userScore: { ...state, userScore: action.userScore ? state.userScore + action.userScore : state.userScore},
+  reset_userScore: { ...state, userScore: 0},
   set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer },
   set_shouldShowResult: {...state, shouldShowResult: action.shouldShowResult }
 })[action.type] || state
@@ -36,12 +37,13 @@ const App = () => {
     dispatch({type: "set_currentQuestion", currentQuestion: isTheLastQuestion ? null : state.shouldShowResult ? 0 : state.currentQuestion + 1})
     dispatch({type: "set_clickedAnswer", clickedAnswer: null})
     dispatch({type: "set_shouldShowResult", shouldShowResult: isTheLastQuestion})
+    state.shouldShowResult && dispatch({type: "reset_userScore"})
   }
 
   return (
     <div className="app">
       <div className="main">
-        {state.shouldShowResult && <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length-1)*state.userScore} ({state.userScore/((state.questions.length-1)*state.userScore)*100}%)`</p>}
+        {state.shouldShowResult && <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length)*10} ({state.userScore/((state.questions.length)*10)*100}%)`</p>}
         {state.questions.length > 0 && !state.shouldShowResult &&
         <>
           <div>
