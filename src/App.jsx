@@ -3,11 +3,11 @@ import { useReducer, useEffect } from "react";
 const reducer = (state, action) => ({
   set_questions: {...state, questions: action.questions},
   set_currentQuestion: {...state, currentQuestion: state.currentQuestion === 4 ? 0 : state.currentQuestion + 1},
-  set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer}
+  set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer, userScore: action.userScore ? state.userScore + action.userScore : state.userScore}
 })[action.type] || state
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, {questions: [], currentQuestion: 0, clickedAnswer: null})
+  const [state, dispatch] = useReducer(reducer, {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0})
   console.log(state.questions)
   let rightOption = state?.questions[state.currentQuestion]?.correctOption 
 
@@ -23,7 +23,7 @@ const App = () => {
   // }
 
   const handleClickAnswer = (answer) => {
-    dispatch({type: "set_clickedAnswer", clickedAnswer: answer})
+    dispatch({type: "set_clickedAnswer", clickedAnswer: answer, userScore: rightOption === answer ? 10 : 0})
     // checkTheAnswer(answer)
   }
 
