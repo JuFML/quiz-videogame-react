@@ -2,11 +2,13 @@ import { useReducer, useEffect } from "react";
 
 const reducer = (state, action) => ({
   set_questions: {...state, questions: action.questions},
-  set_currentQuestion: {...state, currentQuestion: state.currentQuestion === state.questions.length - 1 ? 0 : state.currentQuestion + 1},
-  set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer, userScore: action.userScore ? state.userScore + action.userScore : state.userScore}
+  set_currentQuestion: {...state, currentQuestion: action.currentQuestion},
+  set_userScore: { ...state, userScore: action.userScore ? state.userScore + action.userScore : state.userScore},
+  set_clickedAnswer: {...state, clickedAnswer: action.clickedAnswer },
+  set_shouldShowResult: {...state, shouldShowResult: action.shouldShowResult }
 })[action.type] || state
 
-const initialState = {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0}
+const initialState = {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0, shouldShowResult: false}
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
@@ -25,19 +27,22 @@ const App = () => {
   // }
 
   const handleClickAnswer = (answer) => {
-    dispatch({type: "set_clickedAnswer", clickedAnswer: answer, userScore: rightOption === answer ? 10 : 0})
+    dispatch({type: "set_clickedAnswer", clickedAnswer: answer})
+    dispatch({type: "set_userScore", userScore: rightOption === answer ? state?.questions[state.currentQuestion]?.points : 0})
     // checkTheAnswer(answer)
   }
 
   const handleNextClick = () => {
-    dispatch({type: "set_currentQuestion"})
+    dispatch({type: "set_currentQuestion", currentQuestion: isTheLastQuestion ? null : state.shouldShowResult ? 0 : state.currentQuestion + 1})
     dispatch({type: "set_clickedAnswer", clickedAnswer: null})
+    dispatch({type: "set_shouldShowResult", shouldShowResult: isTheLastQuestion})
   }
 
   return (
     <div className="app">
       <div className="main">
-        {state.questions.length > 0 &&
+        {state.shouldShowResult && <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length-1)*state.userScore} ({state.userScore/((state.questions.length-1)*state.userScore)*100}%)`</p>}
+        {state.questions.length > 0 && !state.shouldShowResult &&
         <>
           <div>
             <h4>{state?.questions[state.currentQuestion]?.question}</h4>
@@ -46,11 +51,12 @@ const App = () => {
               <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => handleClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
             </ul>
           </div>
+          </>}
           <div>
             <div className="timer"></div>
-            {state.clickedAnswer !== null && <button className=" btn btn-ui" onClick={handleNextClick}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>}
+            <button className=" btn btn-ui" onClick={handleNextClick}>{state.shouldShowResult ? "Reiniciar quiz" : !isTheLastQuestion ? "Próxima" : "Finalizar"}</button>
           </div>
-        </>}
+
       </div>
     </div>
   );
