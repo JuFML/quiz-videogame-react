@@ -42,6 +42,10 @@ const App = () => {
 
   return (
     <div className="app">
+      <header className="app-header">
+        <img src="/images/logo-quiz-videogames.png" alt="Logo do Quiz dos Videogames" />
+        <h1>Quiz dos Videogames</h1>
+      </header>
       <div className="main">
         {state.shouldShowResult && <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length)*10} ({state.userScore/((state.questions.length)*10)*100}%)`</p>}
         {state.questions.length > 0 && !state.shouldShowResult &&
