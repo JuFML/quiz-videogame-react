@@ -56,7 +56,8 @@ const App = () => {
           </>}
           <div>
             <div className="timer"></div>
-            <button className=" btn btn-ui" onClick={handleNextClick}>{state.shouldShowResult ? "Reiniciar quiz" : !isTheLastQuestion ? "Próxima" : "Finalizar"}</button>
+            { state.clickedAnswer != null && <button className=" btn btn-ui" onClick={handleNextClick}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>}
+            { state.shouldShowResult && <button className=" btn btn-ui" onClick={handleNextClick}>Reiniciar quiz</button>}
           </div>
 
       </div>
