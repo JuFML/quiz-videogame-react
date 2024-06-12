@@ -9,7 +9,7 @@ const reducer = (state, action) => ({
   set_shouldShowResult: {...state, shouldShowResult: action.shouldShowResult }
 })[action.type] || state
 
-const initialState = {questions: [], currentQuestion: 0, clickedAnswer: null, userScore: 0, shouldShowResult: false}
+const initialState = {questions: [], currentQuestion: null, clickedAnswer: null, userScore: 0, shouldShowResult: false}
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
@@ -34,10 +34,14 @@ const App = () => {
   }
 
   const handleNextClick = () => {
-    dispatch({type: "set_currentQuestion", currentQuestion: isTheLastQuestion ? null : state.shouldShowResult ? 0 : state.currentQuestion + 1})
     dispatch({type: "set_clickedAnswer", clickedAnswer: null})
     dispatch({type: "set_shouldShowResult", shouldShowResult: isTheLastQuestion})
+    dispatch({type: "set_currentQuestion", currentQuestion: state.shouldShowResult ? null : isTheLastQuestion ? null : state.currentQuestion + 1})
     state.shouldShowResult && dispatch({type: "reset_userScore"})
+  }
+
+  const handleStartClick = () => {
+    dispatch({type: "set_currentQuestion", currentQuestion: 0})
   }
 
   return (
@@ -47,22 +51,38 @@ const App = () => {
         <h1>Quiz dos Videogames</h1>
       </header>
       <div className="main">
-        {state.shouldShowResult && <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length)*10} ({state.userScore/((state.questions.length)*10)*100}%)`</p>}
-        {state.questions.length > 0 && !state.shouldShowResult &&
-        <>
-          <div>
-            <h4>{state?.questions[state.currentQuestion]?.question}</h4>
-            <ul className="options" >
-              {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
-              <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => handleClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
-            </ul>
+        {!state.shouldShowResult && state.currentQuestion === null && 
+          <div className="start">
+            <h2>Bem vindo ao Quiz dos Videogames!</h2>
+            <h3>{state.questions?.length} questões para te testar</h3>
+            <button className=" btn btn-ui" onClick={handleStartClick}>Bora começar</button>
           </div>
-          </>}
+        }
+    
+
+        {state.shouldShowResult && 
+        <>
+          <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length)*10} ({state.userScore/((state.questions.length)*10)*100}%)`</p>
+          <button className=" btn btn-ui" onClick={handleNextClick}>Reiniciar quiz</button>
+        </>
+        }
+        {state.currentQuestion !== null && state.questions.length > 0 && !state.shouldShowResult &&
+          <>
+            <div>
+              <h4>{state?.questions[state.currentQuestion]?.question}</h4>
+              <ul className="options" >
+                {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
+                <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => handleClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
+              </ul>
+            </div>
+          </>
+        }
+        {state.currentQuestion !== null && 
           <div>
             <div className="timer"></div>
             { state.clickedAnswer != null && <button className=" btn btn-ui" onClick={handleNextClick}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>}
-            { state.shouldShowResult && <button className=" btn btn-ui" onClick={handleNextClick}>Reiniciar quiz</button>}
           </div>
+        }
 
       </div>
     </div>
