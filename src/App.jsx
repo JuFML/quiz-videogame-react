@@ -84,6 +84,15 @@ const Timer = ({appState, onHandleTimer}) => {
   )
 }
 
+const Header = () => {
+  return (    
+    <header className="app-header">
+      <img src="/images/logo-quiz-videogames.png" alt="Logo do Quiz dos Videogames" />
+      <h1>Quiz dos Videogames</h1>
+    </header>
+  )
+}
+
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
   let rightOption = state?.questions[state?.currentQuestion]?.correctOption 
@@ -119,10 +128,7 @@ const App = () => {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <img src="/images/logo-quiz-videogames.png" alt="Logo do Quiz dos Videogames" />
-        <h1>Quiz dos Videogames</h1>
-      </header>
+      <Header />
       <div className="main">
         {state.appStatus === "ready" && 
           <div className="start">
