@@ -66,10 +66,6 @@ const Timer = ({appState, onHandleTimer}) => {
       return
     }
 
-    if(appState.appStatus === "finished") {
-      return
-    }
-
     const id = setTimeout(() => setSeconds(prev => prev -1), 1000)
     return () => clearTimeout(id)
 
