@@ -69,7 +69,7 @@ const App = () => {
   const maxScore = state.questions.reduce((acc, question) => acc + question.points, 0)
 
   useEffect(() => {
-    fetch("http://localhost:5173/src/videogame-questions.json")
+    fetch("https://raw.githubusercontent.com/JuFML/quiz-videogame-react/main/src/videogame-questions.json")
       .then(response => response.json())
       .then(data => dispatch({type: "set_questions",  questions: data}))
       .catch(error => alert(error.message))
