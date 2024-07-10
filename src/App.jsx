@@ -110,6 +110,12 @@ const Result = ({state, onClickRestart, maxScore}) => {
   )
 }
 
+const ButtonNext = ({onClickNext, isTheLastQuestion}) => {
+  return (
+    <button className=" btn btn-ui" onClick={onClickNext}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>
+  )
+}
+
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
   let rightOption = state?.questions[state?.currentQuestion]?.correctOption 
@@ -166,7 +172,7 @@ const App = () => {
             </div>
             <div>
               <Timer appState={state} onHandleTimer={handleTimer}  />
-              { state.clickedAnswer != null && <button className=" btn btn-ui" onClick={handleClickNext}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>}
+              { state.clickedAnswer != null && <ButtonNext onClickNext={handleClickNext} isTheLastQuestion={isTheLastQuestion}/>}
             </div>
           </>
         }
