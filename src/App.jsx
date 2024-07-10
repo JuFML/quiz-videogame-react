@@ -69,7 +69,7 @@ const Timer = ({appState, onHandleTimer}) => {
     const id = setTimeout(() => setSeconds(prev => prev -1), 1000)
     return () => clearTimeout(id)
 
-  }, [seconds, onHandleTimer, appState])
+  }, [seconds, onHandleTimer])
   const mins = Math.floor(seconds/60)
   const secs = seconds % 60
 
@@ -86,6 +86,17 @@ const Header = () => {
       <img src="/images/logo-quiz-videogames.png" alt="Logo do Quiz dos Videogames" />
       <h1>Quiz dos Videogames</h1>
     </header>
+  )
+}
+
+const Start = ({state, onClickStart}) => {
+
+  return (
+    <div className="start">
+      <h2>Bem vindo ao Quiz dos Videogames!</h2>
+      <h3>{state.questions?.length} questões para te testar</h3>
+      <button className=" btn btn-ui" onClick={onClickStart}>Bora começar</button>
+    </div>
   )
 }
 
@@ -126,15 +137,7 @@ const App = () => {
     <div className="app">
       <Header />
       <div className="main">
-        {state.appStatus === "ready" && 
-          <div className="start">
-            <h2>Bem vindo ao Quiz dos Videogames!</h2>
-            <h3>{state.questions?.length} questões para te testar</h3>
-            <button className=" btn btn-ui" onClick={handleClickStart}>Bora começar</button>
-          </div>
-        }
-    
-
+        {state.appStatus === "ready" && <Start state={state} onClickStart={handleClickStart}/>}
         {state.appStatus === "finished" && 
         <>
           <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {(state.questions.length)*10} ({state.userScore/((state.questions.length)*10)*100}%)`</p>
