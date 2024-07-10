@@ -1,4 +1,12 @@
-import { useReducer, useEffect, useState } from "react";
+import { useReducer, useEffect } from "react";
+import { Header } from "@/components/Header";
+import { Timer } from "@/components/Timer";
+import { Start } from "@/components/Start";
+import { Result } from "@/components/Result";
+import { ButtonNext } from "@/components/ButtonNext";
+import { Progress } from "@/components/Progress";
+import { Questions } from "@/components/Questions";
+import { secondsPerQuestion } from "@/utils/secondsPerQuestion";
 
 const reducer = (state, action) => {
 
@@ -54,103 +62,11 @@ const reducer = (state, action) => {
 
 const initialState = {questions: [], currentQuestion: null, clickedAnswer: null, userScore: 0, countdown: 50, appStatus: "ready"}
 
-const secondsPerQuestion = 30
-
-const Timer = ({appState, onHandleTimer}) => {
-  const [seconds, setSeconds] = useState(secondsPerQuestion * appState.questions.length)
-
-  useEffect(() =>{
-
-    if(seconds === 0) {
-      onHandleTimer({message:"game_over"})
-      return
-    }
-
-    const id = setTimeout(() => setSeconds(prev => prev -1), 1000)
-    return () => clearTimeout(id)
-
-  }, [seconds, onHandleTimer])
-  const mins = Math.floor(seconds/60)
-  const secs = seconds % 60
-
-  return (
-    <>
-      <div className="timer">{mins < 10 ? `0${mins}`: mins}:{secs < 10 ? `0${secs}`: secs}</div>
-    </>
-  )
-}
-
-const Header = () => {
-  return (    
-    <header className="app-header">
-      <img src="/images/logo-quiz-videogames.png" alt="Logo do Quiz dos Videogames" />
-      <h1>Quiz dos Videogames</h1>
-    </header>
-  )
-}
-
-const Start = ({state, onClickStart}) => {
-
-  return (
-    <div className="start">
-      <h2>Bem vindo ao Quiz dos Videogames!</h2>
-      <h3>{state.questions?.length} questões para te testar</h3>
-      <button className=" btn btn-ui" onClick={onClickStart}>Bora começar</button>
-    </div>
-  )
-}
-
-const Result = ({state, onClickRestart, maxScore}) => {
-  const percentage = state.userScore / maxScore * 100
-  return (
-    <>
-      <p className="result"><span>😊</span>Você fez {state.userScore} pontos de {maxScore} ({percentage}%)</p>
-      <button className=" btn btn-ui" onClick={onClickRestart}>Reiniciar quiz</button>
-    </>
-  )
-}
-
-const ButtonNext = ({onClickNext, isTheLastQuestion}) => {
-  return (
-    <button className=" btn btn-ui" onClick={onClickNext}>{!isTheLastQuestion ? "Próxima" : "Finalizar"}</button>
-  )
-}
-
-const Progress = ({state, maxScore}) => {
-  const userHasAnswered = state.clickedAnswer !== null
-  const progressValue = userHasAnswered ? state.currentQuestion + 1 : state.currentQuestion
-
-  return (
-    <header className="progress">
-      <label>
-        <progress max={state.questions.length} value={progressValue}>{progressValue}</progress>
-        <span>Questao <b>{state.currentQuestion + 1}</b> / {state.questions.length}</span>
-        <span><b>{state.userScore}</b> / {maxScore}</span>
-      </label>
-    </header>
-  )
-}
-
-const Questions = ({state, onClickAnswer, rightOption}) => {
-
-  return (
-    <div>
-      <h4>{state?.questions[state.currentQuestion]?.question}</h4>
-      <ul className="options" >
-        {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
-        <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => onClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
-      </ul>
-    </div>
-  )
-}
-
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
   const rightOption = state?.questions[state?.currentQuestion]?.correctOption 
   const isTheLastQuestion = state?.currentQuestion === state?.questions?.length - 1
   const maxScore = state.questions.reduce((acc, question) => acc + question.points, 0)
-  
-
 
   useEffect(() => {
     fetch("http://localhost:5173/src/videogame-questions.json")
