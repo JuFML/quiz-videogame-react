@@ -146,8 +146,8 @@ const Questions = ({state, onClickAnswer, rightOption}) => {
 
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
-  let rightOption = state?.questions[state?.currentQuestion]?.correctOption 
-  let isTheLastQuestion = state?.currentQuestion === state?.questions?.length - 1
+  const rightOption = state?.questions[state?.currentQuestion]?.correctOption 
+  const isTheLastQuestion = state?.currentQuestion === state?.questions?.length - 1
   const maxScore = state.questions.reduce((acc, question) => acc + question.points, 0)
   
 
@@ -160,11 +160,17 @@ const App = () => {
   },[])
 
   useEffect(() => {
-    if(state.seconds === null) {
-      return
+    let id
+
+    const run = () => {
+      if(state.seconds === null) {
+        return
+      }
+
+      id = setTimeout(() => dispatch({type: "tick"}), 1000)
     }
 
-    const id = setTimeout(() => dispatch({type: "tick"}), 1000)
+    run()
     return () => clearTimeout(id)
   }, [state.seconds])
 
