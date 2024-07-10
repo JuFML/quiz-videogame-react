@@ -131,6 +131,19 @@ const Progress = ({state, maxScore}) => {
   )
 }
 
+const Questions = ({state, onClickAnswer, rightOption}) => {
+
+  return (
+    <div>
+      <h4>{state?.questions[state.currentQuestion]?.question}</h4>
+      <ul className="options" >
+        {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
+        <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => onClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
+      </ul>
+    </div>
+  )
+}
+
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
   let rightOption = state?.questions[state?.currentQuestion]?.correctOption 
@@ -170,13 +183,7 @@ const App = () => {
         {state.appStatus === "active" && state.questions.length > 0 &&
           <>
             <Progress state={state} maxScore={maxScore} />
-            <div>
-              <h4>{state?.questions[state.currentQuestion]?.question}</h4>
-              <ul className="options" >
-                {state?.questions[state?.currentQuestion]?.options.map((option, index) => (
-                <li key={index}><button  disabled={state.clickedAnswer !== null} onClick={() => handleClickAnswer(index)} className={`btn btn-option ${state.clickedAnswer!== null && (index === rightOption ? "correct" : "wrong")}  ${state.clickedAnswer === index  && "answer"}`}>{option}</button></li>))}
-              </ul>
-            </div>
+            <Questions state={state} onClickAnswer={handleClickAnswer} rightOption={rightOption}/>
             <div>
               <Timer appState={state} onHandleTimer={handleTimer}  />
               { state.clickedAnswer != null && <ButtonNext onClickNext={handleClickNext} isTheLastQuestion={isTheLastQuestion}/>}
