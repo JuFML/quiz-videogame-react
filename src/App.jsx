@@ -116,13 +116,26 @@ const ButtonNext = ({onClickNext, isTheLastQuestion}) => {
   )
 }
 
+const Progress = ({state, maxScore}) => {
+  const userHasAnswered = state.clickedAnswer !== null
+  const progressValue = userHasAnswered ? state.currentQuestion + 1 : state.currentQuestion
+
+  return (
+    <header className="progress">
+      <label>
+        <progress max={state.questions.length} value={progressValue}>{progressValue}</progress>
+        <span>Questao <b>{state.currentQuestion + 1}</b> / {state.questions.length}</span>
+        <span><b>{state.userScore}</b> / {maxScore}</span>
+      </label>
+    </header>
+  )
+}
+
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)  
   let rightOption = state?.questions[state?.currentQuestion]?.correctOption 
   let isTheLastQuestion = state?.currentQuestion === state?.questions?.length - 1
-  const userHasAnswered = state.clickedAnswer !== null
   const maxScore = state.questions.reduce((acc, question) => acc + question.points, 0)
-  const progressValue = userHasAnswered ? state.currentQuestion + 1 : state.currentQuestion
   
 
 
@@ -156,13 +169,7 @@ const App = () => {
         {state.appStatus === "finished" && <Result state={state} onClickRestart={handleClickRestart} maxScore={maxScore}/>        }
         {state.appStatus === "active" && state.questions.length > 0 &&
           <>
-            <header className="progress">
-              <label>
-                <progress max={state.questions.length} value={progressValue}>{progressValue}</progress>
-                <span>Questao <b>{state.currentQuestion + 1}</b> / {state.questions.length}</span>
-                <span><b>{state.userScore}</b> / {maxScore}</span>
-              </label>
-            </header>
+            <Progress state={state} maxScore={maxScore} />
             <div>
               <h4>{state?.questions[state.currentQuestion]?.question}</h4>
               <ul className="options" >
