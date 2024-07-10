@@ -9,7 +9,7 @@
   </h1>
 
 <h3 align="center">
-    <a href="https://quiz-videogame.netlify.app/">Access demo page</a>
+    <a href="https://quiz-videogame.netlify.app/" target="_blank">Access demo page</a>
 <h3 >
 
 # Index
